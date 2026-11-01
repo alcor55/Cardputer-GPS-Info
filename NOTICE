@@ -1,0 +1,24 @@
+Cardputer GPS Info
+Copyright 2025-2026 alcor55 and contributors.
+
+Original project:
+https://github.com/alcor55/Cardputer-GPS-Info
+
+Spanish README translation (2026): webbrain-one.
+
+Third-party software
+
+Third-party dependencies retain their respective licenses, copyright notices,
+and attributions. They are not relicensed by this project's Apache-2.0 license.
+
+M5Cardputer, M5Unified and M5GFX are provided by M5Stack under their respective
+MIT license terms, including the notices for third-party components they contain.
+
+TinyGPSPlus (TinyGPS++)
+Copyright (C) 2008-2013 Mikal Hart.
+Licensed under the GNU Lesser General Public License, version 2.1 or later.
+Based on work by and "distanceBetween" and "courseTo" courtesy of Maarten Lamers.
+Suggestion to add satellites, courseTo(), and cardinal() by Matt Monson.
+Location precision improvements suggested by Wayne Holder.
+
+These notices are informational and do not modify the Apache License, Version 2.0.

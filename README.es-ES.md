@@ -8,15 +8,18 @@ Lee datos GPS a través de UART y muestra la ubicación, velocidad, rumbo, visib
 <img src="https://raw.githubusercontent.com/alcor55/Cardputer-GPS-Info/main/1.jpeg" alt="Screenshot 1" width="30%">
 
 ## Changelog
-1.0.0 - Primera versión.
+1.2.0 - Se agregaron perfiles Grove, Cap LoRa-1262 y Ares y configuración manual.
+      - Se corrigieron el teclado, las ventanas superpuestas, los conteos y los datos obsoletos.
+      - Se agregaron baudios USB configurables, mapa ampliado y barras por constelación.
+      - Se agregaron la licencia Apache-2.0, configuración de compilación y pruebas de regresión.
 1.1.0 - Se agregó soporte para archivos de configuración en la microSD (cpGpsInfo.conf) para almacenar los pines RX/TX del GPS y la velocidad de baudios.
       - Se agregó la posibilidad de modificar la velocidad de baudios del GPS.
       - Corrección de errores menores.
       - Se agregó el estado de error del GPS (on,off,err).
+1.0.0 - Primera versión.
 
 ## ToDo
-- Mejorar el manejo de errores GPS.
-- Agregar una ventana emergente de referencia con los pines y la velocidad de baudios para los modelos de GPS más utilizados.
+- Validar el perfil GPS Grove con hardware físico cuando haya un módulo disponible.
 
 ## Características
 
@@ -25,7 +28,7 @@ Lee datos GPS a través de UART y muestra la ubicación, velocidad, rumbo, visib
 - Mapa del cielo de satélites con estado codificado por colores:
   - Verde: utilizado en la solución
   - Amarillo: visible
-  - Rojo: no utilizado
+  - Rojo: con posición anterior, ya no visible
 - Opcionalmente mostrar la ID del satélite y el sistema en el mapa
 
 <img src="https://raw.githubusercontent.com/alcor55/Cardputer-GPS-Info/main/6.jpeg" alt="Screenshot 1" width="30%">
@@ -59,3 +62,30 @@ Presiona `n`, con el Cardputer conectado vía USB, abre tu software NMEA, selecc
 ## Imprimir lista de satélites en serial USB `[l]`
 
 <img src="https://raw.githubusercontent.com/alcor55/Cardputer-GPS-Info/main/7.png" alt="Screenshot 7" width="30%">
+
+## Configuración USB y ventanas gráficas
+
+- `c`: configura por separado `GPS baud` y `USB baud`. La velocidad USB se puede
+  editar con cualquier perfil y se guarda en la microSD. Los archivos anteriores
+  usan 115200 como valor USB predeterminado. En USB CDC nativo este parámetro no
+  cambia la velocidad física del enlace USB.
+- `f`: abre o cierra un mapa del cielo ampliado en una ventana cuadrada arriba
+  a la derecha, con marco verde, sombra negra y sin texto adicional. `p` muestra
+  los identificadores y `o` las constelaciones.
+- `b`: abre o cierra el gráfico, con un margen de 5 píxeles en cada lado,
+  de satélites visibles por constelación, incluidos
+  QZSS, SBAS y NavIC. La suma de las barras corresponde a `Visb`.
+- Las dos ventanas se actualizan sin detener el GPS. Se puede cambiar entre
+  ellas con `f` y `b`, y cerrarlas también con Retroceso.
+
+Las ventanas usan un contenedor común superpuesto a la pantalla principal:
+relleno negro, marco verde y borde negro exterior de 2 píxeles. La pantalla
+principal permanece visible fuera de la ventana, también al cambiar entre ellas.
+
+## Licencia
+
+Cardputer GPS Info se distribuye bajo la licencia Apache, versión 2.0
+(Apache-2.0). Consulta [LICENSE](LICENSE) para leer el texto completo de la
+licencia y [NOTICE](NOTICE) para la información de copyright y atribuciones.
+
+Las dependencias de terceros conservan sus respectivas licencias y atribuciones.
