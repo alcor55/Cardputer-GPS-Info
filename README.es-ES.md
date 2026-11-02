@@ -8,6 +8,8 @@ Lee datos GPS a través de UART y muestra la ubicación, velocidad, rumbo, visib
 <img src="https://raw.githubusercontent.com/alcor55/Cardputer-GPS-Info/main/1.jpeg" alt="Screenshot 1" width="30%">
 
 ## Changelog
+Actualización del paquete 1.2.0 (2026-11-02) - Un único binario completo para M5Burner y M5Launcher.
+
 1.2.0 - Se agregaron perfiles Grove, Cap LoRa-1262 y Ares y configuración manual.
       - Se corrigieron el teclado, las ventanas superpuestas, los conteos y los datos obsoletos.
       - Se agregaron baudios USB configurables, mapa ampliado y barras por constelación.
@@ -45,7 +47,17 @@ Lee datos GPS a través de UART y muestra la ubicación, velocidad, rumbo, visib
 <img src="https://raw.githubusercontent.com/alcor55/Cardputer-GPS-Info/main/2.jpeg" alt="Screenshot 2" width="30%">
 <img src="https://raw.githubusercontent.com/alcor55/Cardputer-GPS-Info/main/3.jpeg" alt="Screenshot 3" width="30%">
 
-## Hardware
+## Instalación y compilación
+
+Ejecuta `pio run` para generar
+`build/release/Cardputer_GPS_Info-1.2.0-universal.bin`. Este único archivo incluye
+bootloader, tabla de particiones, inicialización OTA y aplicación. Usa el mismo
+archivo con M5Burner (dirección **0x0**) o M5Launcher, que extrae la aplicación.
+La grabación directa por USB sustituye el launcher instalado. Compilar no graba
+el dispositivo. `.pio/build/cardputer/firmware.bin` es un archivo intermedio con
+solo la aplicación: no lo publiques en M5Burner ni lo grabes en 0x0.
+
+## Hardware compatible
 
 - M5Stack Cardputer (1, 1.1, ADV)
 - Módulo GPS conectado a pines TX/RX configurables (se configura con la tecla `[c]`)

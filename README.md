@@ -6,6 +6,8 @@ It reads GPS data via UART and displays location, speed, course, satellite visib
 <img src="https://raw.githubusercontent.com/alcor55/Cardputer-GPS-Info/main/1.jpeg" alt="Screenshot 1" width="30%">
 
 ## Changelog
+1.2.0 packaging update (2026-11-02) - Added one complete binary for both M5Burner and M5Launcher.
+
 1.2.0 - Added Grove, Cap LoRa-1262 and Ares GPS profiles plus manual settings.
       - Fixed keyboard handling, popup overlays, satellite counts and stale metrics.
       - Added configurable USB serial baudrate, enlarged skyplot and constellation bars.
@@ -107,8 +109,15 @@ Cardputer variants. From this folder, with PlatformIO installed, run:
 pio run
 ```
 
-The build pins the ESP32 platform and library versions. It produces
-`.pio/build/cardputer/firmware.bin`; building does not flash the device.
+The build pins the ESP32 platform and library versions. It produces one distribution
+file, `build/release/Cardputer_GPS_Info-1.2.0-universal.bin`, containing the
+bootloader, partition table, OTA initialization and application. Use this same file
+for M5Burner publication/direct USB flashing at **0x0**, or install it using
+M5Launcher, which extracts the application from the complete image. Building does
+not flash the device. Direct USB flashing replaces the installed launcher.
+
+`.pio/build/cardputer/firmware.bin` is an intermediate application-only image;
+do not upload it to M5Burner or flash it at 0x0.
 Arduino IDE is also supported: open `Cardputer_GPS_Info.ino`, keep
 the `GpsConfig.h`, `GpsMetrics.h`, `GpsViews.h`, `GpsPopup.h` headers beside it, enable USB
 CDC on boot, and install the libraries listed in
