@@ -99,6 +99,9 @@ Presiona `n`, con el Cardputer conectado vía USB, abre tu software NMEA, selecc
 - Las dos ventanas se actualizan sin detener el GPS. Se puede cambiar entre
   ellas con `f` y `b`, y cerrarlas también con Retroceso.
 
+<img src="images/enlarged-skyplot.jpg" alt="Mapa del cielo ampliado con la tecla f" width="45%">
+<img src="images/visible-satellites.jpg" alt="Satélites visibles por constelación con la tecla b" width="45%">
+
 Las ventanas usan un contenedor común superpuesto a la pantalla principal:
 relleno negro, marco verde y borde negro exterior de 2 píxeles. La pantalla
 principal permanece visible fuera de la ventana, también al cambiar entre ellas.

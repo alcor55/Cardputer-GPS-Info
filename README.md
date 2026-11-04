@@ -262,6 +262,9 @@ On builds using a UART serial console it sets that console's baudrate.
 - Press `f` or `b` to switch directly between the graphical popups. Backspace
   also closes either popup. `c`, `h` and `i` switch to the existing dialogs.
 
+<img src="images/enlarged-skyplot.jpg" alt="Enlarged skyplot opened with f" width="45%">
+<img src="images/visible-satellites.jpg" alt="Visible satellites by constellation opened with b" width="45%">
+
 The bar-chart popup has a 5-pixel margin on every side. Both graphics refresh
 once per second with a buffered frame to avoid blanking
 the LCD during updates. With no current GSV data, the bars show `--`, rather than
