@@ -7,12 +7,13 @@
 #include <SPI.h>
 #include <memory>
 #include <utility/Keyboard/KeyboardReader/TCA8418.h>
+#include <utility/Keyboard/KeyboardReader/IOMatrix.h>
 #include "GpsConfig.h"
 #include "GpsMetrics.h"
 #include "GpsViews.h"
 #include "GpsPopup.h"
 
-#define APP_VERSION "1.2.0"
+#define APP_VERSION "1.2.1"
 
 #define CONFIG_FILE "/cpGpsInfo.conf"
 bool sdAvailable = false;
@@ -930,36 +931,60 @@ void handleControls() {
   }
 }
 
-/*    Detect the ADV keyboard before enabling any GPIO matrix reader.
-*     Ares pull-ups on G5/G6 can confuse the display library's board detection.
+/*    Probe the ADV controller before enabling either keyboard reader.
+*     GPIO-based board detection can be affected by external hardware.
 */
 void initCardputerKeyboard() {
-  boardAdv = M5.getBoard() == m5::board_t::board_M5CardputerADV;
-  if (!boardAdv) {
-    m5::In_I2C.release();
-    m5::In_I2C.begin(I2C_NUM_1, 8, 9);
-    boardAdv = m5::In_I2C.scanID(0x34);
-    if (!boardAdv) m5::In_I2C.release();
+  m5::In_I2C.release();
+  boardAdv = false;
+  for (int attempt = 0; attempt < 2 && !boardAdv; attempt++) {
+    if (m5::In_I2C.begin(I2C_NUM_1, 8, 9))
+      boardAdv = m5::In_I2C.scanID(0x34);
+    if (!boardAdv) {
+      m5::In_I2C.release();
+      if (attempt == 0) delay(20);
+    }
   }
   if (boardAdv) {
-    m5::In_I2C.begin(I2C_NUM_1, 8, 9);
     std::unique_ptr<KeyboardReader> reader(new TCA8418KeyboardReader(11));
     M5Cardputer.Keyboard.begin(std::move(reader));
-  } else
-    M5Cardputer.Keyboard.begin();
+  } else {
+    std::unique_ptr<KeyboardReader> reader(new IOMatrixKeyboardReader());
+    M5Cardputer.Keyboard.begin(std::move(reader));
+  }
+  Serial.printf("[boot] Display board: %d; keyboard: %s\n", (int)M5.getBoard(),
+      boardAdv ? "ADV TCA8418" : "Original GPIO matrix");
+}
+
+/*    Show startup progress without waiting for a USB host or a GPS receiver.
+*/
+void drawBootStage(const char* stage) {
+  Serial.printf("[boot] %s\n", stage);
+  M5Cardputer.Display.fillScreen(TFT_BLACK);
+  M5Cardputer.Display.setTextColor(TFT_GREEN, TFT_BLACK);
+  M5Cardputer.Display.setTextSize(1);
+  M5Cardputer.Display.setCursor(8, 8);
+  M5Cardputer.Display.print("Cardputer GPS Info " APP_VERSION);
+  M5Cardputer.Display.setTextColor(TFT_WHITE, TFT_BLACK);
+  M5Cardputer.Display.setCursor(8, 32);
+  M5Cardputer.Display.print(stage);
 }
 
 /*    Standard setup function.
 */
 void setup() {
+  Serial.begin(115200);
+  Serial.println("[boot] Cardputer GPS Info " APP_VERSION ": display init");
   auto cfg = M5.config();
   cfg.internal_mic = false;
   cfg.internal_spk = false;
   cfg.internal_imu = false;
   cfg.internal_rtc = false;
   M5Cardputer.begin(cfg, false); // Initialize keyboard after checking ADV hardware.
-  initCardputerKeyboard();
   M5Cardputer.Display.setBrightness(32); // Set brightness 0-255.
+  drawBootStage("Checking keyboard...");
+  initCardputerKeyboard();
+  drawBootStage(boardAdv ? "ADV: checking microSD..." : "Original: checking microSD...");
   if (boardAdv) {
     // Bootstrap SD before the saved profile is known. Weak pull-ups keep
     // radio chip selects high without driving Ares IR RX or Cap BUSY outputs.
@@ -971,18 +996,18 @@ void setup() {
   SPI.begin(40, 39, 14, 12); // Cardputer microSD: SCK, MISO, MOSI, CS.
   if (SD.begin(12, SPI, 4000000)) {
     sdAvailable = true;
+    Serial.println("[boot] microSD mounted; loading configuration");
     loadConfig();
-  } else
+  } else {
     sdAvailable = false;
+    Serial.println("[boot] No microSD; using RAM settings");
+  }
   if (configLoadErr || !sdAvailable || !SD.exists(CONFIG_FILE)) {
-    configsMenu = openMenu = true;
-    configsDraft = gpsConfig;
-    fillConfigFields();
     if (configMessage.length() == 0)
       configMessage = configLoadErr ? "SD read error; defaults kept" : "Choose profile, then press Enter";
-    drawConfig(true);
-  } else
-    updateScreen(true); // Forced first update.
+  }
+  updateScreen(true); // Always start on the main screen, including without SD.
+  Serial.println("[boot] Ready. [c]Settings [s]Start GPS");
 }
 
 /*    Standard loop.

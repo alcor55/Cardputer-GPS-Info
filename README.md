@@ -6,6 +6,9 @@ It reads GPS data via UART and displays location, speed, course, satellite visib
 <img src="https://raw.githubusercontent.com/alcor55/Cardputer-GPS-Info/main/1.jpeg" alt="Screenshot 1" width="30%">
 
 ## Changelog
+1.2.1 - Verify the ADV keyboard controller before selecting its driver.
+      - Start on the main screen without microSD; add visible and USB startup diagnostics.
+
 1.2.0 packaging update (2026-11-02) - Added one complete binary for both M5Burner and M5Launcher.
 
 1.2.0 - Added Grove, Cap LoRa-1262 and Ares GPS profiles plus manual settings.
@@ -83,8 +86,9 @@ then `s` to start GPS. Opening configuration stops GPS; cancelling does not
 apply draft values or restart it. Without a working SD card, values are applied
 only until power-off, and a message reports this explicitly.
 
-The menu opens automatically when no configuration exists or the saved file is
-invalid. Old files containing `gpsRxPin`, `gpsTxPin` and `gpsBaud` remain readable
+The app starts on the main screen even without microSD or a valid configuration.
+Press `c` to choose a GPS profile before starting reception. Old files containing
+`gpsRxPin`, `gpsTxPin` and `gpsBaud` remain readable
 as Manual with the Grove hardware base. For an existing Ares installation,
 select the Ares profile explicitly once; UART pin numbers alone cannot identify
 the attached expansion board.
@@ -110,7 +114,7 @@ pio run
 ```
 
 The build pins the ESP32 platform and library versions. It produces one distribution
-file, `build/release/Cardputer_GPS_Info-1.2.0-universal.bin`, containing the
+file, `build/release/Cardputer_GPS_Info-1.2.1-universal.bin`, containing the
 bootloader, partition table, OTA initialization and application. Use this same file
 for M5Burner publication/direct USB flashing at **0x0**, or install it using
 M5Launcher, which extracts the application from the complete image. Building does
@@ -126,6 +130,15 @@ CDC on boot, and install the libraries listed in
 The retained host regression tests cover presets, manual validation, old/new configuration
 formats, key holds/chord changes, NMEA checksums, reception timeouts, satellite
 identity, complete GSV cycles, signal bands and individual metric validity:
+
+`python3 tests/CardputerStartupTest.py` also checks the sketch's startup functions
+with simulated peripherals: keyboard selection despite an incorrect board ID,
+controller retries, I2C initialization failures and SD/configuration states. This
+is a control-flow test, not an ESP32 emulator or a physical hardware validation.
+During startup, progress is shown on the display and logged to USB serial at
+115200 baud without waiting for a connected computer. For a failed boot, record
+the last displayed stage and capture the USB log from reset. The earliest ROM
+messages may require the chip's UART console rather than USB CDC.
 
 ```sh
 c++ -std=c++11 -Wall -Wextra -Werror tests/GpsConfigTest.cpp -o /tmp/cardputer-gps-test
@@ -149,6 +162,11 @@ c++ -std=c++11 -Wall -Wextra -Itests/support -I.pio/libdeps/cardputer/TinyGPSPlu
 ```
 
 Device verification checklist:
+
+For 1.2.1, repeat installation via M5Burner and M5Launcher on both original
+Cardputer and ADV, with and without microSD. Check that the main screen appears,
+`c` opens/closes settings, and `s` starts reception. Original hardware validation
+is pending; the previous 1.2.0 ADV results do not validate this new build.
 
 1. Hold `c`: the menu must open once and remain stable. Check both navigation
    directions, editing with Backspace, and Enter / `c` while keys are held.

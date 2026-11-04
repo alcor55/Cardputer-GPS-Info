@@ -8,6 +8,9 @@ Lee datos GPS a través de UART y muestra la ubicación, velocidad, rumbo, visib
 <img src="https://raw.githubusercontent.com/alcor55/Cardputer-GPS-Info/main/1.jpeg" alt="Screenshot 1" width="30%">
 
 ## Changelog
+1.2.1 - Verificación del controlador de teclado ADV antes de elegir el driver.
+      - Pantalla principal sin microSD e información de arranque en pantalla y USB.
+
 Actualización del paquete 1.2.0 (2026-11-02) - Un único binario completo para M5Burner y M5Launcher.
 
 1.2.0 - Se agregaron perfiles Grove, Cap LoRa-1262 y Ares y configuración manual.
@@ -50,12 +53,18 @@ Actualización del paquete 1.2.0 (2026-11-02) - Un único binario completo para 
 ## Instalación y compilación
 
 Ejecuta `pio run` para generar
-`build/release/Cardputer_GPS_Info-1.2.0-universal.bin`. Este único archivo incluye
+`build/release/Cardputer_GPS_Info-1.2.1-universal.bin`. Este único archivo incluye
 bootloader, tabla de particiones, inicialización OTA y aplicación. Usa el mismo
 archivo con M5Burner (dirección **0x0**) o M5Launcher, que extrae la aplicación.
 La grabación directa por USB sustituye el launcher instalado. Compilar no graba
 el dispositivo. `.pio/build/cardputer/firmware.bin` es un archivo intermedio con
 solo la aplicación: no lo publiques en M5Burner ni lo grabes en 0x0.
+
+La aplicación arranca en la pantalla principal incluso sin microSD. Pulsa `c`
+para elegir el perfil GPS y después `s` para iniciar la recepción. El arranque
+muestra su progreso en pantalla y en USB a 115200 baudios. La versión 1.2.1
+requiere verificación física en Cardputer original y ADV con ambos métodos de
+instalación; las pruebas ADV de 1.2.0 no validan esta compilación.
 
 ## Hardware compatible
 
